@@ -6,25 +6,8 @@ const int redBut = 8;
 const int yellowBut = 12;
 const int blueBut = 7;
 const int buzzer = 5;
-int Size, score = 0, i;
-char seq[6], answer[6], lev, option;
-
-// Asks the user the difficulty and, according to it, determines the space of the vectors which will be used.
-void level(){
- Serial.print(" Choose the difficulty: Easy (e), Normal (n) or Hard (h). ");
- while(true){
-  if(Serial.available() > 0){
-    lev = Serial.read();
-    if(lev == 'e') Size = 4;
-    else if(lev == 'n') Size = 5;
-    else if(lev == 'h') Size = 6;
-    break;
-  }
- }
- Serial.println(lev);
- Serial.println();
- delay(800);
-}
+int Size = 1, score = 0, i;
+char seq[10], answer[10], option;
 
 // Raffles the sequence of LEDs that will blink.
 void giveAway(){
@@ -61,6 +44,7 @@ void turnBuzzer(){
       break;
     }
    Serial.println(option);
+   Serial.println();
 }
 
 // Turns the LEDs ON and plays each respective sound.
@@ -88,7 +72,7 @@ void ledsOn(){
 
 // Gets the user's answer by the keyboard ot the buttons...
 void takeAnswer(){
-  Serial.println(" What's the sequence?");
+  Serial.print(" What's the sequence?");
   for(i = 0; i < Size;){
     if(Serial.available() > 0) butInput();
     else if(digitalRead(redBut) == LOW || digitalRead(yellowBut) == LOW || digitalRead(blueBut) == LOW) keyboardInput();
@@ -150,12 +134,25 @@ void right(){
     delay(150);
     tone(buzzer, 1950);
   }
+  if(Size == 10){
+    Serial.println(" You win!");
+    Size = 0;
+  }
+  digitalWrite(redLed,HIGH);
+  digitalWrite(yellowLed,HIGH);
+  digitalWrite(blueLed,HIGH);
+  delay(100);
+  digitalWrite(redLed,LOW);
+  digitalWrite(yellowLed,LOW);
+  digitalWrite(blueLed,LOW);
+  Size++;
 }
 
 // In the case of an incorrect sequence.
 void wrong(){
   Serial.println(" Wrong!");
   score = 0;
+  Size = 1;
   if(option == 'y'){
     tone(buzzer, 1550);
     delay(150);
@@ -174,7 +171,6 @@ void setup(){
   pinMode(redBut,INPUT_PULLUP);
   Serial.begin(9600);
   turnBuzzer();
-  level();
   randomSeed(analogRead(0));
 }
 
@@ -188,7 +184,6 @@ void loop(){
   result();
   Serial.print(" Score: ");
   Serial.println(score);
-  Serial.println(" New round...");
   Serial.println();
   delay(2000);
 }
