@@ -79,8 +79,8 @@ void takeAnswer(){
   }
 }
 
-// If the answer comes by a button.
-void butInput(){
+// If the answer comes by the keyboard.
+void keyboardInput(){
   answer[i] = Serial.read();
   if(answer[i] == 'r') redSound();
   else if(answer[i] == 'y') yellowSound();
@@ -88,8 +88,8 @@ void butInput(){
   printAnswer();
 }
 
-// If the answer comes by the keyboard.
-void keyboardInput(){
+// If the answer comes by a button.
+void butInput(){
   if(digitalRead(redBut) == LOW){
     redSound();
     answer[i] = 'r';
